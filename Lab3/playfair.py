@@ -58,7 +58,6 @@ def modifyWord(message):
 	size = 2
 	message = separateIdentical(message)
 	message = message.replace(" ", "")
-	print(message)
 	newMessage = [message[i:i+size] for i in range(0, len(message), size)]
 	for letters in newMessage:
 	 	#Replace j -> i
