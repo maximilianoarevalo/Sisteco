@@ -28,8 +28,21 @@ def printMatrix(matrix):
 	for row in matrix:
 		print(*row, sep = " ")
 
+def separateIdentical(message):
+	iterator = 0
+	modifiedMessage = ""
+	while(iterator < len(message)):
+		modifiedMessage = modifiedMessage + message[iterator]
+		if (iterator == len(message) - 1):
+			break
+		elif (message[iterator] == message[iterator+1]):
+			modifiedMessage = modifiedMessage + "x"
+		iterator = iterator + 1
+	return modifiedMessage
+
 def modifyWord(message):
 	size = 2
+	message = separateIdentical(message)
 	newMessage = [message[i:i+size] for i in range(0, len(message), size)]
 	for letters in newMessage:
 	 	#Replace j -> i
@@ -68,8 +81,6 @@ def encrypt(modifyMessage,playfairMatrix):
 		#Get the index
 		for letter in pairLetters:
 			positions.append(findInMatrix(letter,playfairMatrix))
-		print(positions)
-		print("New positions:")
 		#Rules
 		#Rule 1: If m1 and m2 are in the same row -> c1 and c2 located on the right (circular)
 		if positions[0][0] == positions[1][0]:
@@ -92,30 +103,56 @@ def encrypt(modifyMessage,playfairMatrix):
 			encrypted = encrypted + playfairMatrix[a][b]
 			encrypted = encrypted + playfairMatrix[c][d]
 			#print("Encrypted: "+encrypted)
-			break;
+			
+		#Rule 2: If m1 and m2 are in the same column -> c1 and c2 located under (circular)
+		if positions[0][1] == positions[1][1]:
+			positions[0][0] = positions[0][0] + 1 
+			positions[1][0] = positions[1][0] + 1
+			a = positions[0][0]
+			b = positions[0][1]
+			c = positions[1][0]
+			d = positions[1][1]
+			#Index validation
+			if a == 5:
+				a = 0
+			elif b == 5:
+				b = 0
+			elif c == 5:
+				c = 0
+			elif d == 5:
+				d = 0
+			encrypted = encrypted + playfairMatrix[a][b]
+			encrypted = encrypted + playfairMatrix[c][d]
 
-	return encrypted		
-	
+		#Rule 3: If m1 and m2 are in different row and column -> c1 and c2 opposite diagonal
+		if (positions[0][0] != positions[1][0]) and (positions[0][1] != positions[1][1]):
+			old = positions[0][1]
+			positions[0][1] = positions[1][1] 
+			positions[1][1] = old
+			a = positions[0][0]
+			b = positions[0][1]
+			c = positions[1][0]
+			d = positions[1][1]
+			encrypted = encrypted + playfairMatrix[a][b]
+			encrypted = encrypted + playfairMatrix[c][d]
 
-	#Rule 2: If m1 and m2 are in the same column -> c1 and c2 located under (circular)
-
-	#Rule 3: If m1 and m2 are in different row and column -> c1 and c2 opposite diagonal
-
-	#Rule 4: If m1 = m2, add caracter between m1 and m2, and then applicate the 1-3 rules
+	return encrypted	
 
 
 #Funcionamiento original
-#key = input("Ingrese la clave para el cifrado playfair: ")
-#word = input("Ingrese la palabra a encriptar: ")
-#matrix = createMatrix(key)
-#modifiedWord= modifyWord(palabra)
-key = "monarchy"
-matriz = createMatrix(key)
-palabra = "mrximiliano"
-A = modifyWord(palabra)
+key = input("Ingrese la clave para el cifrado playfair: ")
+word = input("Ingrese la palabra a encriptar: ")
+matrix = createMatrix(key)
+modifiedWord= modifyWord(word)
+encryptedText = encrypt(modifiedWord,matrix)
+print("La palabra "+word+" encriptada en cifrado Playfair con llave "+key+" es: "+encryptedText)
+#key = "monarchy"
+#matriz = createMatrix(key)
+#palabra = "maximiliano"
+#A = modifyWord(palabra)
 #encryptedText = encrypt(modifiedWord,matrix)
 #print(A)
 #ubicacion = findInMatrix("X",matriz)
-printMatrix(matriz)
+#printMatrix(matriz)
 #print(ubicacion)
-encrypt(A,matriz)
+#encrypt(A,matriz)
