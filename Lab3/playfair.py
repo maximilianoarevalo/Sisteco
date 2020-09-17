@@ -57,6 +57,8 @@ def separateIdentical(message):
 def modifyWord(message):
 	size = 2
 	message = separateIdentical(message)
+	message = message.replace(" ", "")
+	print(message)
 	newMessage = [message[i:i+size] for i in range(0, len(message), size)]
 	for letters in newMessage:
 	 	#Replace j -> i
@@ -155,23 +157,117 @@ def encrypt(modifyMessage,playfairMatrix):
 			encrypted = encrypted + playfairMatrix[c][d]
 	return encrypted	
 
+#Entrada: Lista con el mensaje encriptado separado en pares de caracteres y la matriz de cifrado Playfair
+#Procesamiento: Desencripta los pares de caracteres en base a las reglas del cifrado Playfair
+#Salida: Palabra desencriptada utilizando cifrado Playfair con llave utilizada al crear la matriz
+def decrypt(encriptedMessage, key):
+	message = [encriptedMessage[i:i+2] for i in range(0, len(encriptedMessage), 2)]
+	decrypted = ""
+	playfairMatrix = createMatrix(key)
+	for pairLetters in message:
+		positions = []
+		#Get the index
+		for letter in pairLetters:
+			positions.append(findInMatrix(letter,playfairMatrix))
+		#Rules
+		#Rule 1: If m1 and m2 are in the same row -> c1 and c2 located on the right (circular)
+		if positions[0][0] == positions[1][0]:
+			positions[0][1] = positions[0][1] - 1
+			positions[1][1] = positions[1][1] - 1
+			a = positions[0][0]
+			b = positions[0][1]
+			c = positions[1][0]
+			d = positions[1][1]
+			#Index validation
+			if a == 5:
+				a = 0
+			elif b == 5:
+				b = 0
+			elif c == 5:
+				c = 0
+			elif d == 5:
+				d = 0
+			decrypted = decrypted + playfairMatrix[a][b]
+			decrypted = decrypted + playfairMatrix[c][d]
+			
+		#Rule 2: If m1 and m2 are in the same column -> c1 and c2 located under (circular)
+		if positions[0][1] == positions[1][1]:
+			positions[0][0] = positions[0][0] - 1 
+			positions[1][0] = positions[1][0] - 1
+			a = positions[0][0]
+			b = positions[0][1]
+			c = positions[1][0]
+			d = positions[1][1]
+			#Index validation
+			if a == 5:
+				a = 0
+			elif b == 5:
+				b = 0
+			elif c == 5:
+				c = 0
+			elif d == 5:
+				d = 0
+			decrypted = decrypted + playfairMatrix[a][b]
+			decrypted = decrypted + playfairMatrix[c][d]
 
-#Funcionamiento original
-key = input("Ingrese la clave para el cifrado playfair: ")
-word = input("Ingrese la palabra a encriptar: ")
-matrix = createMatrix(key)
-modifiedWord= modifyWord(word)
-encryptedText = encrypt(modifiedWord,matrix)
-print("La palabra "+word+" encriptada en cifrado Playfair con llave "+key+" es: "+encryptedText)
+		#Rule 3: If m1 and m2 are in different row and column -> c1 and c2 opposite diagonal
+		if (positions[0][0] != positions[1][0]) and (positions[0][1] != positions[1][1]):
+			old = positions[0][1]
+			positions[0][1] = positions[1][1] 
+			positions[1][1] = old
+			a = positions[0][0]
+			b = positions[0][1]
+			c = positions[1][0]
+			d = positions[1][1]
+			decrypted = decrypted + playfairMatrix[a][b]
+			decrypted = decrypted + playfairMatrix[c][d]
+	return decrypted
 
-#Funcionamiento de pruebas
-#key = "monarchy"
-#matriz = createMatrix(key)
-#palabra = "maximiliano"
-#A = modifyWord(palabra)
-#encryptedText = encrypt(modifiedWord,matrix)
-#print(A)
-#ubicacion = findInMatrix("X",matriz)
-#printMatrix(matriz)
-#print(ubicacion)
-#encrypt(A,matriz)
+#Entrada: No tiene entrada directa, se solicitan por consola
+#Procesamiento: Encripta una palabra utilizando cifrado Playfair con una determinada llave
+#Salida: Palabra encriptada utilizando cifrado Playfair con llave utilizada al crear la matriz
+def playfairCrypt():
+	encryptKey = input("Ingrese la clave para el cifrado Playfair: ")
+	word = input("Ingrese la palabra a encriptar: ")
+	matrix = createMatrix(encryptKey)
+	modifiedWord= modifyWord(word)
+	encryptedText = encrypt(modifiedWord,matrix)
+	print("La palabra "+word+" encriptada en cifrado Playfair con llave "+encryptKey+" es: "+encryptedText)
+
+#Entrada: No tiene entrada directa, se solicitan por consola
+#Procesamiento: Desencripta una palabra utilizando cifrado Playfair con una determinada llave
+#Salida: Palabra desencriptada utilizando cifrado Playfair con llave utilizada al crear la matriz
+def playfairDecrypt():
+	decryptKey = input("Ingrese la clave para desencriptar en cifrado Playfair: ")
+	cryptedWord = input("Ingrese la palabra encriptada en cifrado Playfair: ")
+	realWord = decrypt(cryptedWord,decryptKey)
+	print("La palabra "+cryptedWord+" desencriptada en cifrado Playfair con llave "+decryptKey+" es: "+realWord)	
+
+#Entrada: No tiene entrada directa, se solicitan por consola
+#Procesamiento: Encripta o desencripta palabras utilizando cifrado Playfair
+#Salida: Palabra encriptada o desencriptada utilizando cifrado Playfair
+def menu():
+	print("### Cifrado Playfair ###")
+	print("Seleccione una de las siguientes opciones: ")
+	print("1. Encriptar")
+	print("2. Desencriptar")
+	print("3. Salir")
+	opcion = input("Ingrese su opción: ")
+	off = False
+	while not off:
+		if opcion == "1":
+			playfairCrypt()
+			off = True
+		elif opcion == "2":
+			playfairDecrypt()
+			off = True
+		elif opcion == "3":
+			off = True
+			print("Hasta luego")
+		else:
+			print("Por favor, ingrese una opción valida")
+			print(" ")
+			menu()
+
+#Cifrado Playfair
+menu()
