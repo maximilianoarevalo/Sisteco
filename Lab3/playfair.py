@@ -1,5 +1,8 @@
 # Playfair Cipher
 
+#Entrada: Una palabra que representa la llave para encriptar y desencriptar
+#Procesamiento: En base a la llave se crea una matriz de 5x5 donde se ingresan las letras
+#Salida: Matriz para el cifrado playfair con la llave ingresada
 def createMatrix(key):
 	rows = 5
 	columns = 5
@@ -24,10 +27,16 @@ def createMatrix(key):
 		matrixCharacters = matrixCharacters[5:]
 	return playfairMatrix
 
+#Entrada: Una matriz de cualquier tamaño
+#Procesamiento: Imprime de manera clara los elementos de una matriz
+#Salida: Matriz en consola
 def printMatrix(matrix):
 	for row in matrix:
 		print(*row, sep = " ")
 
+#Entrada: Un mensaje a encriptar como texto plano
+#Procesamiento: En caso de existir dos palabras iguales seguidas en el mensaje, se agrega una x entre ellas
+#Salida: Mensaje con una x entre los caracteres consecutivos repetidos
 def separateIdentical(message):
 	iterator = 0
 	modifiedMessage = ""
@@ -40,6 +49,11 @@ def separateIdentical(message):
 		iterator = iterator + 1
 	return modifiedMessage
 
+#Entrada: Un mensaje a encriptar como texto plano
+#Procesamiento: Modifica un mensaje agregando x entre caracteres o agregando una x al final
+#para pares de caracteres que queden de largo 1, reemplaza las j por i y separa los caracteres
+#en pares
+#Salida: Lista con el mensaje separado en pares de caracteres
 def modifyWord(message):
 	size = 2
 	message = separateIdentical(message)
@@ -58,6 +72,9 @@ def modifyWord(message):
 		newMessage[i] = newMessage[i].upper()
 	return newMessage
 
+#Entrada: Una letra en particular y la matriz para el cifrado Playfair
+#Procesamiento: Recorre la matriz buscando la letra y la almacena en una lista
+#Salida: Lista con la ubicacion de la letra en la matriz del cifrado Playfair
 def findInMatrix(letter,playfairMatrix):
 	rowIterator = 0;
 	columnIterator = 0;
@@ -74,6 +91,9 @@ def findInMatrix(letter,playfairMatrix):
 		rowIterator = rowIterator + 1
 	return ubication
 
+#Entrada: Lista con el mensaje separado en pares de caracteres y la matriz de cifrado Playfair
+#Procesamiento: Encripta los pares de caracteres en base a las reglas del cifrado Playfair
+#Salida: Palabra encriptada utilizando cifrado Playfair con llave utilizada al crear la matriz
 def encrypt(modifyMessage,playfairMatrix):
 	encrypted = ""
 	for pairLetters in modifyMessage:
@@ -99,10 +119,8 @@ def encrypt(modifyMessage,playfairMatrix):
 				c = 0
 			elif d == 5:
 				d = 0
-			#print(positions)
 			encrypted = encrypted + playfairMatrix[a][b]
 			encrypted = encrypted + playfairMatrix[c][d]
-			#print("Encrypted: "+encrypted)
 			
 		#Rule 2: If m1 and m2 are in the same column -> c1 and c2 located under (circular)
 		if positions[0][1] == positions[1][1]:
@@ -135,7 +153,6 @@ def encrypt(modifyMessage,playfairMatrix):
 			d = positions[1][1]
 			encrypted = encrypted + playfairMatrix[a][b]
 			encrypted = encrypted + playfairMatrix[c][d]
-
 	return encrypted	
 
 
@@ -146,6 +163,8 @@ matrix = createMatrix(key)
 modifiedWord= modifyWord(word)
 encryptedText = encrypt(modifiedWord,matrix)
 print("La palabra "+word+" encriptada en cifrado Playfair con llave "+key+" es: "+encryptedText)
+
+#Funcionamiento de pruebas
 #key = "monarchy"
 #matriz = createMatrix(key)
 #palabra = "maximiliano"
