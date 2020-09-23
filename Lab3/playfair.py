@@ -280,8 +280,8 @@ def avalancheTest(message1,message2,key):
 #Procesamiento: Encripta o desencripta palabras utilizando cifrado Playfair
 #Salida: Palabra encriptada o desencriptada utilizando cifrado Playfair
 def menu():
-	#Block size is 16 bytes, because the characters of the message are grouped in pairs
-	#The thoughput must be in Kilobytes, so the block size is 0.015625 Kilobytes
+	#Block size is 2 bytes, because the characters of the message are grouped in pairs
+	#The thoughput must be in Kilobytes, so the block size is 0.002 Kilobytes
 	print("### Cifrado Playfair ###")
 	print("Considere que ni la llave ni el mensaje pueden contener números debido a la naturaleza del encriptado Playfair")
 	print("Seleccione una de las siguientes opciones: ")
@@ -290,7 +290,7 @@ def menu():
 	print("3. Salir")
 	opcion = input("Ingrese su opción: ")
 	off = False
-	blockSize = 0.015625
+	blockSize = 0.002
 	while not off:
 		if opcion == "1":
 			#Playfair encrypt
